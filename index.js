@@ -6,7 +6,7 @@ const cors = require('cors')
 
 const app = express();
 
-const url = 'https://www.theguardian.com/europe'
+const url = 'https://www.europ-assistance.cz'
 
 app.use(cors())
 app.get('/', function(req, res){
@@ -21,12 +21,16 @@ app.get('/results', (req,res) => {
         const $ = cheerio.load(html)
         const articles = []
 
-        $('.dcr-lv2v9o', html).each(function() {
-            const title = $(this).attr('aria-label')
-            const url = 'https://www.theguardian.com    '+$(this).attr('href')
+        $('.group', html).each(function() {
+            const title = $(this).find('h3').text()
+            const url = 'https://www.europ-assistance.cz'+$(this).attr('href')
+            const description = $(this).find('.text-ea-gray600').text()
+            const imageUrl = $(this).find('img').attr('src')
             articles.push({
                title,
-                url
+                url,
+                description,
+                imageUrl
             })
         })
         console.log(articles)
