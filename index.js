@@ -4,13 +4,13 @@ const cheerio = require('cheerio');
 const express = require('express');
 const cors = require('cors')
 const fs = require('fs');
-const { finished } = require('stream');
+const convert = require('xml-js');
 
 const app = express();
 
 const url = 'https://www.europ-assistance.cz'
 const stringifiedData = [];
-let articles = [];
+
 
 app.use(cors())
 app.get('/', function(req, res){
@@ -37,7 +37,7 @@ app.get('/results', (req,res) => {
                 imageUrl
             })
         })
-        console.log(articles)
+        //console.log(articles)
         res.json(articles)
         data = JSON.stringify(articles, null, 2);
         fs.writeFile('articles.json', data,finished);
@@ -47,6 +47,19 @@ app.get('/results', (req,res) => {
     }).catch(err => console.log(err))
 })
 
+
+
+
+
+app.get('/articles.xml', (req,res) => {
+    
+    const json = require('fs').readFileSync('articles.json', 'utf8');
+    const options = {compact: true, ignoreComment: true, spaces: 4};
+    const result = convert.json2xml(json, options);
+   console.log(result)
+   res.send(result)
+
+})
 
 
 app.listen(PORT, () => console.log(`server running on PORT ${PORT}`)); 
